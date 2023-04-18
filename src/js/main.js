@@ -2,6 +2,24 @@ const statusEl = document.getElementById('status');
 const dataEl = document.getElementById('data');
 const headersEl = document.getElementById('headers');
 const configEl = document.getElementById('config');
+const baseUrl = 'https://jsonplaceholder.typicode.com';
+
+const handleError = (error) => {
+	const err = `${error.config.method} request got failed ❌`;
+	if (error.response) {
+		// erro na requisição
+		console.log(`${err}\n\nDATA ERROR\n${error.response.data}\n\nSTATUS CODE\n${error.response.status}\n\nHEADERS\n${error.response.headers}`);
+	} else if (error.request) {
+		// requisição feita mas nenhuma resposta foi recebida
+		// `error.request` é uma instancia de XMLHttpRequest no navegador e uma
+		// instância de http.ClientRequest no node.js
+		console.log(`${err}\n\nREQUEST ERROR\n\n${error.request}`);
+	} else {
+		// qualquer erro genérico
+		console.log(`${err}\n\nMESSAGE ERROR\n\n${error.message}`);
+	}
+	console.log(error.config);
+}
 
 const get = () => {
 	/*axios({
@@ -9,20 +27,34 @@ const get = () => {
 			url: 'https://jsonplaceholder.typicode.com/posts'
 	})*/
 
-	axios.get('https://jsonplaceholder.typicode.com/posts', {
+	const config = {
 		// https://jsonplaceholder.typicode.com/posts?_limit=5 or
 		params: {
 			_limit: 5
 		}
-	})
+	}
+
+	axios.get(`${baseUrl}/posts`, config)
 		.then((response) => {
-			renderOutput(response)
+			renderOutput(response);
 		})
-	console.log('get');
+		.catch(
+			err => handleError(err)
+		);
 }
 
 const post = () => {
-	console.log('post');
+	const data = {
+		"title": "foo",
+		"body": "foo",
+		"userId": 1,
+	};
+
+	axios.post(`${baseUrl}/posts`, data)
+		.then((response) => {
+			renderOutput(response);
+		})
+		.catch
 }
 
 const put = () => {
@@ -62,6 +94,7 @@ const clear = () => {
 }
 
 const renderOutput = (response) => {
+	console.log(`${response.config.method} request success ✅`);
 	// Status
 	const status = response.status;
 	statusEl.removeAttribute('class');
