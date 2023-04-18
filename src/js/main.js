@@ -4,23 +4,6 @@ const headersEl = document.getElementById('headers');
 const configEl = document.getElementById('config');
 const baseUrl = 'https://jsonplaceholder.typicode.com';
 
-const handleError = (error) => {
-	const err = `${error.config.method} request got failed ❌`;
-	if (error.response) {
-		// erro na requisição
-		console.log(`${err}\n\nDATA ERROR\n${error.response.data}\n\nSTATUS CODE\n${error.response.status}\n\nHEADERS\n${error.response.headers}`);
-	} else if (error.request) {
-		// requisição feita mas nenhuma resposta foi recebida
-		// `error.request` é uma instancia de XMLHttpRequest no navegador e uma
-		// instância de http.ClientRequest no node.js
-		console.log(`${err}\n\nREQUEST ERROR\n\n${error.request}`);
-	} else {
-		// qualquer erro genérico
-		console.log(`${err}\n\nMESSAGE ERROR\n\n${error.message}`);
-	}
-	console.log(error.config);
-}
-
 const get = () => {
 	/*axios({
 			method: 'get',
@@ -39,15 +22,15 @@ const get = () => {
 			renderOutput(response);
 		})
 		.catch(
-			err => handleError(err)
+			(err) => handleError(err)
 		);
 }
 
 const post = () => {
 	const data = {
-		"title": "foo",
-		"body": "foo",
-		"userId": 1,
+		title: "foo",
+		body: "foo",
+		userId: 1,
 	};
 
 	axios.post(`${baseUrl}/posts`, data)
@@ -60,15 +43,32 @@ const post = () => {
 }
 
 const put = () => {
-	console.log('put');
+	// atualiza todo um "objeto" na requisição (replace)
+	const data = {
+		title: "foo",
+		body: "foo",
+		userId: 1,
+	};
+
+	axios.put(`${baseUrl}/posts/1`, data)
+		.then((response) => renderOutput(response))
 }
 
 const patch = () => {
-	console.log('patch');
+	// atualiza parte de um "objeto" em uma requisição (correção)
+	const data = {
+		title: "patchaed foo",
+	};
+
+	axios.patch(`${baseUrl}/posts/1`, data)
+		.then((response) => renderOutput(response))
 }
 
 const del = () => {
-	console.log('delete');
+
+	axios.delete(`${baseUrl}/posts/1`)
+		.then((response) => renderOutput(response))
+		.catch((err) => handleError(err))
 }
 
 const multiple = () => {
@@ -93,6 +93,23 @@ const clear = () => {
 	dataEl.innerHTML = '';
 	headersEl.innerHTML = '';
 	configEl.innerHTML = '';
+}
+
+const handleError = (error) => {
+	const err = `${error.config.method} request got failed ❌`;
+	if (error.response) {
+		// erro na requisição
+		console.log(`${err}\n\nDATA ERROR\n${error.response.data}\n\nSTATUS CODE\n${error.response.status}\n\nHEADERS\n${error.response.headers}`);
+	} else if (error.request) {
+		// requisição feita mas nenhuma resposta foi recebida
+		// `error.request` é uma instancia de XMLHttpRequest no navegador e uma
+		// instância de http.ClientRequest no node.js
+		console.log(`${err}\n\nREQUEST ERROR\n\n${error.request}`);
+	} else {
+		// qualquer erro genérico
+		console.log(`${err}\n\nMESSAGE ERROR\n\n${error.message}`);
+	}
+	console.log(error.config);
 }
 
 const renderOutput = (response) => {
