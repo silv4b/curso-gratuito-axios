@@ -86,11 +86,44 @@ const multiple = () => {
 }
 
 const transform = () => {
-	console.log('transform');
+
+	const config = {
+		params: {
+			_limit: 5
+		},
+		// usado que existe a necessidade de fazer alguma operação no payload da requisição
+		// exemplo, adicionar um novo campo.
+		transformResponse: [function (data) {
+			const payload = JSON.parse(data).map(o => {
+				return {
+					...o, // todos os atributos que já existem +
+					is_selected: false, // esse novo atributo
+					title_body: o.title + ' -> ' + o.body // esse novo atributo
+				}
+			});
+
+			return payload;
+		}],
+	}
+
+	axios.get(`${baseUrl}/posts`, config)
+		.then((response) => renderOutput(response))
 }
 
 const errorHandling = () => {
-	console.log('errorHandling');
+	axios.get(`${baseUrl}/postsz`, config)
+		.then((response) => {
+			renderOutput(response)
+		})
+		.catch((error) => {
+			renderOutput(error.response);
+			handleError(error);
+			console.log(error);
+			console.log(error.response);
+			console.log(error.response.data);
+			console.log(error.response.status);
+			console.log(error.response.headers);
+		});
 }
 
 const cancel = () => {
@@ -103,6 +136,7 @@ const clear = () => {
 	dataEl.innerHTML = '';
 	headersEl.innerHTML = '';
 	configEl.innerHTML = '';
+	console.clear();
 }
 
 const handleError = (error) => {
