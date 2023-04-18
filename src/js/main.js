@@ -126,8 +126,34 @@ const errorHandling = () => {
 		});
 }
 
+// cancelamento manual de uma request
 const cancel = () => {
-	console.log('cancel');
+	const controller = new AbortController();
+
+	const config = {
+		params: {
+			_limit: 5
+		},
+		signal: controller.signal
+	}
+
+	// caso seja um post, config se torna o terceiro parâmetro
+	// axios.post(`${baseUrl}/posts`, data ,config)
+
+	axios.get(`${baseUrl}/pos_ts`, config)
+		.then((response) => {
+			console.log('passou');
+			renderOutput(response);
+		})
+		.catch((error) => {
+			console.log('deu errado');
+			console.log(`request status: ${error.message}`);
+			console.log(error);
+		})
+
+	// simulando um cancelamento manual (cliquei no botão de cancelar em uma requisição)
+	console.log('cancelamento "manual"')
+	controller.abort();
 }
 
 const clear = () => {
