@@ -54,7 +54,9 @@ const post = () => {
 		.then((response) => {
 			renderOutput(response);
 		})
-		.catch
+		.catch(
+			(err) => handleError(err)
+		);
 }
 
 const put = () => {
