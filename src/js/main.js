@@ -72,7 +72,17 @@ const del = () => {
 }
 
 const multiple = () => {
-	console.log('multiple');
+
+	const config = { params: { _limit: 5 } };
+
+	Promise.all([
+		axios.get(`${baseUrl}/posts`, config),
+		axios.get(`${baseUrl}/users`, config)
+	])
+		.then((response) => {
+			console.table(response[0].data);
+			console.table(response[1].data);
+		})
 }
 
 const transform = () => {
