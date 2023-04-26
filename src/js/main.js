@@ -4,6 +4,40 @@ const headersEl = document.getElementById('headers');
 const configEl = document.getElementById('config');
 const baseUrl = 'https://jsonplaceholder.typicode.com';
 
+// Adiciona um interceptador na requisição
+// Exemplo, poder servir pra injetar alguma configuração, como um Authorization ou Autentication, JWT ou coisas parecidas, no header da requisição
+axios.interceptors.request.use(function (config) {
+	// Faz alguma coisa antes da requisição ser enviada
+	// adicionndo um novo parâmetro na interceptação de uma requisição
+	config.headers.MyAuthorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+	config.data = {
+		first_name: "Bruno Silva"
+	};
+
+	//console.log(config.headers);
+
+	return config;
+}, function (error) {
+	// Faz alguma coisa com o erro da requisição
+	return Promise.reject(error);
+});
+
+// Adiciona um interceptador na resposta
+// Exemplo, pode servir como um .catch global, aja visto que ele identifica o erro da request antes de finalizar o método .then de uma requisição
+axios.interceptors.response.use(function (response) {
+	// Qualquer código de status que dentro do limite de 2xx faz com que está função seja acionada
+	// Faz alguma coisa com os dados de resposta
+	console.log('Sucesso!');
+	console.log(response);
+	return response;
+}, function (error) {
+	// Qualquer código de status que não esteja no limite do código 2xx faz com que está função seja acionada
+	// Faz alguma coisa com o erro da resposta
+	console.log('Deu ruim!');
+	return Promise.reject(error);
+});
+
 const get = () => {
 	/*axios({
 			method: 'get',
