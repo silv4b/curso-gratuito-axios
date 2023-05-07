@@ -4,6 +4,24 @@ const headersEl = document.getElementById('headers');
 const configEl = document.getElementById('config');
 const baseUrl = 'https://jsonplaceholder.typicode.com';
 
+// Define as configurações padrões quando cria uma nova instância
+// interessante para consumo de multiplas APIs, caso seja necessário
+const newAxiosInstance = axios.create({
+	baseURL: 'https://api.example.com',
+	// (1/2) pode ser configurada dentro do método de criação da instância
+	headers: {
+		common: {
+			Authorization: "Nova instância do axios criada dentro do método create."
+		}
+	}
+});
+
+// Altera as configurações padrões após a instância ser criada
+// (2/2) ou pode ser "editada" depois da criação
+// newAxiosInstance.defaults.headers.common['Authorization'] = "Nova instância do axios";
+
+axios.defaults.baseURL = baseUrl;
+
 // Adiciona um interceptador na requisição
 // Exemplo, poder servir pra injetar alguma configuração, como um Authorization ou Autentication, JWT ou coisas parecidas, no header da requisição
 axios.interceptors.request.use(function (config) {
@@ -51,7 +69,17 @@ const get = () => {
 		}
 	}
 
-	axios.get(`${baseUrl}/posts`, config)
+	// instância inicial
+	axios.get(`/posts`, config)
+		.then((response) => {
+			renderOutput(response);
+		})
+		.catch(
+			(err) => handleError(err)
+		);
+
+	// segunda instância do axios sendo usada em uma requisição get
+	newAxiosInstance.get(`/posts`, config)
 		.then((response) => {
 			renderOutput(response);
 		})
@@ -67,7 +95,7 @@ const post = () => {
 		userId: 1,
 	};
 
-	axios.post(`${baseUrl}/posts`, data)
+	axios.post(`/posts`, data)
 		.then((response) => {
 			renderOutput(response);
 		})
@@ -84,7 +112,7 @@ const put = () => {
 		userId: 1,
 	};
 
-	axios.put(`${baseUrl}/posts/1`, data)
+	axios.put(`/posts/1`, data)
 		.then((response) => renderOutput(response))
 }
 
@@ -94,13 +122,13 @@ const patch = () => {
 		title: "patchaed foo",
 	};
 
-	axios.patch(`${baseUrl}/posts/1`, data)
+	axios.patch(`/posts/1`, data)
 		.then((response) => renderOutput(response))
 }
 
 const del = () => {
 
-	axios.delete(`${baseUrl}/posts/1`)
+	axios.delete(`/posts/1`)
 		.then((response) => renderOutput(response))
 		.catch((err) => handleError(err))
 }
@@ -110,8 +138,8 @@ const multiple = () => {
 	const config = { params: { _limit: 5 } };
 
 	Promise.all([
-		axios.get(`${baseUrl}/posts`, config),
-		axios.get(`${baseUrl}/users`, config)
+		axios.get(`/posts`, config),
+		axios.get(`/users`, config)
 	])
 		.then((response) => {
 			console.table(response[0].data);
@@ -140,12 +168,12 @@ const transform = () => {
 		}],
 	}
 
-	axios.get(`${baseUrl}/posts`, config)
+	axios.get(`/posts`, config)
 		.then((response) => renderOutput(response))
 }
 
 const errorHandling = () => {
-	axios.get(`${baseUrl}/postsz`, config)
+	axios.get(`/postsz`, config)
 		.then((response) => {
 			renderOutput(response)
 		})
@@ -174,7 +202,7 @@ const cancel = () => {
 	// caso seja um post, config se torna o terceiro parâmetro
 	// axios.post(`${baseUrl}/posts`, data ,config)
 
-	axios.get(`${baseUrl}/pos_ts`, config)
+	axios.get(`/pos_ts`, config)
 		.then((response) => {
 			console.log('passou');
 			renderOutput(response);
